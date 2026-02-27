@@ -1,10 +1,18 @@
+*This project has been created as part of the 42 curriculum by prasingh*
+
 # Fly-in
 
-Drone routing system: route a fleet of drones from start to end through connected zones (see subject and `maps/README.md`).
+## Description
 
-## Constraints (Chapter V)
+Fly-in is a drone routing system. You are given a map: a graph of **zones** (nodes) and **connections** (edges). One zone is the **start**, one is the **end**. A number of drones start in the start zone and must all reach the end zone. The simulation runs in **discrete turns**: each turn, each drone may move to an adjacent zone or stay put. Moving into a zone has a **cost in turns** (1 for normal/priority zones, 2 for restricted zones; blocked zones cannot be entered). Zones and connections can have **capacity limits** (e.g. at most one drone in a zone, or at most two on a link per turn). The goal is to move all drones to the end in **as few turns as possible**.
 
-These constraints are mandatory and must be respected:
+Maps are text files: they define the number of drones, zones (start, end, and hubs with optional type, color, and max capacity), and connections between zones. The program parses a map file, runs the simulation respecting all movement and capacity rules, and outputs one line per turn listing the moves (e.g. `D1-zoneName D2-zoneName`).
+
+---
+
+## Constraints
+
+The project must respect the following:
 
 ### Forbidden
 
@@ -22,17 +30,25 @@ These constraints are mandatory and must be respected:
 
 ---
 
-## Chapter III — Common Instructions
+## Instructions
 
 ### Setup
 
-Use a virtual environment (recommended):
+We use a virtual environment for dependency isolation. `make install` creates `.venv` and installs dependencies (from `requirements-dev.txt`) with pip. After that, `make run` and `make lint` use the venv automatically when it exists.
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate   # or .venv\Scripts\activate on Windows
-make install
+make install   # creates .venv and installs flake8, mypy, pytest
 ```
+
+To run the simulation, pass a map file path:
+
+```bash
+python main.py path/to/map.txt
+```
+
+Example: `python main.py maps/easy/01_linear_path.txt`
+
+Optional: activate the venv yourself (`source .venv/bin/activate`) for ad‑hoc commands.
 
 ### Makefile targets
 
@@ -45,20 +61,19 @@ make install
 | `make lint`    | flake8 + mypy (required flags)                  |
 | `make lint-strict` | flake8 + mypy --strict (recommended)       |
 
-### General rules (III.1)
+### General rules
 
 - Python 3.10+, flake8, type hints and mypy, docstrings (PEP 257), exception handling and context managers.
-- See `.cursor/rules/common-instructions.mdc` for the full checklist.
 
-### Tests (III.3)
+### Tests
 
-Tests live in `tests/`. Run without pytest: `make test` or `python3 run_tests.py`. With pytest: `pytest tests/ -v`.
+Unit tests are used locally for verification (not submitted).
 
 ---
 
-## VII.7 Performance Benchmarks
+## Performance benchmarks
 
-Expected optimization level (subject reference):
+Expected optimization level:
 
 - **Easy maps:** &lt; 10 turns
 - **Medium maps:** 10–30 turns  
@@ -67,29 +82,29 @@ Expected optimization level (subject reference):
 
 Reference targets per map:
 
-| Category | Map | Target | Run `make benchmark` to see current turns |
-|----------|-----|--------|------------------------------------------|
-| Easy | Linear path (2 drones) | ≤ 6 | |
-| Easy | Simple fork (3 drones) | ≤ 6 | |
-| Easy | Basic capacity (4 drones) | ≤ 8 | |
-| Medium | Dead end trap (5 drones) | ≤ 15 | |
-| Medium | Circular loop (6 drones) | ≤ 20 | |
-| Medium | Priority puzzle (4 drones) | ≤ 12 | |
-| Hard | Maze nightmare (8 drones) | ≤ 45 | |
-| Hard | Capacity hell (12 drones) | ≤ 60 | |
-| Hard | Ultimate challenge (15 drones) | ≤ 35 | |
-| Challenger (optional) | The Impossible Dream (25 drones) | &lt; 41 (record) | |
+| Category | Map | Target |
+|----------|-----|--------|
+| Easy | Linear path (2 drones) | ≤ 6 |
+| Easy | Simple fork (3 drones) | ≤ 6 |
+| Easy | Basic capacity (4 drones) | ≤ 8 |
+| Medium | Dead end trap (5 drones) | ≤ 15 |
+| Medium | Circular loop (6 drones) | ≤ 20 |
+| Medium | Priority puzzle (4 drones) | ≤ 12 |
+| Hard | Maze nightmare (8 drones) | ≤ 45 |
+| Hard | Capacity hell (12 drones) | ≤ 60 |
+| Hard | Ultimate challenge (15 drones) | ≤ 35 |
+| Challenger (optional) | The Impossible Dream (25 drones) | &lt; 41 (record) |
 
-### Answers (peer evaluation)
+### Questions we faced
 
-- **Can your algorithm meet these performance benchmarks?**  
-  Yes for all easy, medium, and hard maps (see `make benchmark`). Challenger is optional; current implementation solves it but does not beat the 41-turn record.
+- **Can the algorithm meet the performance benchmarks?**  
+  Yes for all easy, medium, and hard maps. Challenger is optional; the current implementation solves it but does not beat the 41-turn record.
 
-- **How does your solution compare to the reference targets?**  
-  Run `make benchmark` (or `python3 benchmark.py`) to print actual turn counts vs targets. The implementation uses a single shortest path (Dijkstra by zone cost) and a greedy per-turn scheduler that respects zone and link capacity; it meets or beats the listed targets for the non-challenger maps.
+- **How does the solution compare to the reference targets?**  
+  The implementation uses shortest path by turn cost (Dijkstra) and a per-turn scheduler that respects zone and link capacity. It meets or beats the listed targets for the non-challenger maps.
 
-- **What optimizations did you implement to achieve better performance?**  
-  (1) Shortest path by turn cost (Dijkstra, cost = destination zone movement cost). (2) Per-turn scheduling that respects zone capacity and link capacity and avoids over-subscribing restricted-zone arrivals. (3) All drones share the same path and advance in order, which keeps throughput high on linear or fork-shaped maps. Further optimizations (e.g. multiple paths, look-ahead scheduling, Challenger-specific tuning) can improve turn count further.
+- **What optimizations were implemented?**  
+  (1) Shortest path by turn cost (Dijkstra; cost = destination zone movement cost). (2) Per-turn scheduling with zone and link capacity and restricted-zone arrival checks. (3) For maps with many drones, diverse paths and round-robin assignment to reduce bottleneck queueing. Further optimizations (e.g. look-ahead scheduling) can improve turn count.
 
-- **Can you solve the Challenger map and beat the 41-turn record?**  
-  The Challenger map is **solved** (our best: 52 turns; colleague’s best: 43). **Beating 41 turns is not doable** for this map: the start has a single capacity-1 exit and the shortest path has cost 19, so the theoretical minimum is **19 + 24 = 43** turns. The bonus target (41) is below that minimum. See **docs/CHALLENGER_REPORT.md** for the proof and **docs/ALGORITHM_RESULTS.md** for logged variants.
+- **Can the Challenger map be solved in under 41 turns?**  
+  The Challenger map is solved. Beating 41 turns is not doable on this map: the start has a single capacity-1 exit and the shortest path has cost 19, so the theoretical minimum is **19 + 24 = 43** turns; the bonus target (41) is below that minimum.

@@ -13,6 +13,8 @@ tests/
 run_tests.py
 # Benchmarking (not in submission list)
 benchmark.py
+# IDE / editor
+.cursor/
 
 # ========== Python / build / env ==========
 # Python

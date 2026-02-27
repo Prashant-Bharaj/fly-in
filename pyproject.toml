@@ -1,16 +1,12 @@
+# Tool config and project metadata. Install uses requirements-dev.txt (see Makefile).
+# [tool.mypy] is read by mypy for lint. flake8 uses .flake8.
+
 [project]
 name = "fly-in"
 version = "0.1.0"
 description = "Drone routing system — navigate multiple drones through connected zones."
 readme = "README.md"
 requires-python = ">=3.10"
-
-[project.optional-dependencies]
-dev = [
-    "flake8",
-    "mypy",
-    "pytest",
-]
 
 [tool.flake8]
 max-line-length = 88
