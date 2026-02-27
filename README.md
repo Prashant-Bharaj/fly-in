@@ -71,6 +71,47 @@ Unit tests are used locally for verification (not submitted).
 
 ---
 
+## Resources
+
+- **Pathfinding and graphs**: `https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm`, `https://cp-algorithms.com/graph/breadth-first-search.html`
+- **Python typing and static analysis**: `https://docs.python.org/3/library/typing.html`, `https://mypy.readthedocs.io/`
+- **Code style and linting**: `https://peps.python.org/pep-0008/`, `https://flake8.pycqa.org/`
+- **AI usage**: 
+  - AI is used to understand the subject, input/output format, understand and brainstrom different algorithms.
+  - Also used AI to try out different algorithms and compare there results.
+
+
+
+---
+
+## Algorithm and implementation strategy
+
+The implementation is organized into separate modules for parsing, modeling, pathfinding, and simulation:
+
+- **Parsing and model**: `parser.py` reads the map file format (zones, connections, metadata) and builds a `Map` made of `Zone` and `Connection` objects defined in `model.py`. All constraints from the subject (unique start/end, valid types, capacities, no duplicate connections, etc.) are enforced here.
+- **Pathfinding**: `pathfinding.py` computes shortest paths using Dijkstra’s algorithm, where edge weights are derived from the movement cost of the destination zone (1 turn for normal/priority, 2 turns for restricted, blocked is not traversable). For larger drone counts, it can compute several diverse paths and assign drones in a round-robin way to reduce bottlenecks.
+- **Simulation engine**: `simulation.py` runs the turn-by-turn simulation. Each drone is either **in a zone** or **in transit** toward a restricted zone. At every turn, the engine:
+  - Processes arrivals from restricted connections.
+  - Recomputes zone occupancy and connection usage.
+  - Schedules moves along the precomputed paths, honoring zone capacities (`max_drones`), connection capacities (`max_link_capacity`), and multi-turn moves to restricted zones.
+  - Emits one output line per turn in the required `D<ID>-<zone>` / `D<ID>-<connection>` format.
+  If no drone can move and some drones are still undelivered, the simulation stops with a clear error to avoid deadlocks.
+- **Complexity considerations**: Pathfinding is \(O((V + E) \log V)\) per Dijkstra run, and each simulation turn iterates over all drones and their paths with simple dictionary lookups for capacities, which scales well for the provided maps.
+
+The overall strategy is to precompute good paths once, then use a capacity-aware scheduler each turn to keep the main bottlenecks flowing while avoiding invalid moves or deadlocks.
+
+---
+
+## Visual representation
+
+The project currently uses a **text-based visual representation**:
+
+- Each simulation turn is printed as a single line, listing all drone moves in the required format (e.g. `D1-roof1 D2-corridorA`).
+- By reading the log line by line, you can follow how drones progress through the network, where they wait, and how bottlenecks behave.
+- This simple output is easy to inspect in a terminal, save to a file, or feed into additional visualization tools if desired.
+
+---
+
 ## Performance benchmarks
 
 Expected optimization level:
