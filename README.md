@@ -95,7 +95,7 @@ Reference targets per map:
 | Hard | Ultimate challenge (15 drones) | ≤ 35 |
 | Challenger (optional) | The Impossible Dream (25 drones) | &lt; 41 (record) |
 
-### Questions we faced
+### Faced Questions
 
 - **Can the algorithm meet the performance benchmarks?**  
   Yes for all easy, medium, and hard maps. Challenger is optional; the current implementation solves it but does not beat the 41-turn record.
