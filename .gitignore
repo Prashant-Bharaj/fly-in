@@ -1,0 +1,55 @@
+# ========== Not in submission criteria (Chapter X) ==========
+# Subject PDF (provided separately)
+en.subject.pdf
+# Maps archive (maps/ extracted and used; archive redundant)
+maps.tar.gz
+maps.tar.gz:Zone.Identifier
+# Our analysis / notes (not required for evaluation)
+docs/
+# Utility scripts (not required)
+scripts/
+# Tests (Chapter III.3: not submitted or graded)
+tests/
+run_tests.py
+# Benchmarking (not in submission list)
+benchmark.py
+
+# ========== Python / build / env ==========
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Type checking / linting
+.mypy_cache/
+.ruff_cache/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
