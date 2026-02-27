@@ -1,9 +1,8 @@
 VENV := .venv
 VENV_PYTHON := $(VENV)/bin/python
 VENV_PIP := $(VENV)/bin/pip
-PYTHON := $(if $(wildcard $(VENV_PYTHON)),$(VENV_PYTHON),python3)
+PYTHON := $(VENV_PYTHON)
 
-# Python source files (explicit for linters)
 SRC := main.py parser.py model.py pathfinding.py simulation.py
 
 .PHONY: install run debug clean lint lint-strict test benchmark log-result
@@ -21,7 +20,6 @@ debug:
 clean:
 	rm -rf __pycache__ .mypy_cache .pytest_cache .ruff_cache
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 
 lint:
 	$(PYTHON) -m flake8 $(SRC)
