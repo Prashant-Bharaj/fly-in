@@ -122,7 +122,9 @@ def _parse_zone_line(
     except ValueError:
         raise ParseError(line_no, "Zone coordinates must be integers")
     if len(parts) > 3:
-        raise ParseError(line_no, "Extra tokens after coordinates (put metadata in [...])")
+        raise ParseError(
+            line_no, "Extra tokens after coordinates (put metadata in [...])"
+        )
 
     return (name, x, y, meta)
 
@@ -204,7 +206,7 @@ class MapParser:
                         line_no,
                         "First non-comment line must be nb_drones: <positive_integer>",
                     )
-                rest = line[len("nb_drones:"):].strip()
+                rest = line[len("nb_drones:") :].strip()
                 try:
                     self._nb_drones = _positive_int(rest, "nb_drones")
                 except ValueError as e:
@@ -249,6 +251,7 @@ class MapParser:
 
     def _parse_zone_line_at(self, line_no: int, line: str) -> None:
         """Parse a single zone line and add to state."""
+
         def make_zone(
             n: str, xx: int, yy: int, m: dict[str, str], start: bool, end: bool
         ) -> Zone:
@@ -258,7 +261,7 @@ class MapParser:
                 raise ParseError(line_no, str(e)) from e
 
         if line.startswith("start_hub:"):
-            rest = line[len("start_hub:"):]
+            rest = line[len("start_hub:") :]
             name, x, y, meta = _parse_zone_line(rest, line_no, "start_hub")
             if self._start is not None:
                 raise ParseError(line_no, "Duplicate start_hub: exactly one allowed")
@@ -267,7 +270,7 @@ class MapParser:
             self._start = zone
             return
         if line.startswith("end_hub:"):
-            rest = line[len("end_hub:"):]
+            rest = line[len("end_hub:") :]
             name, x, y, meta = _parse_zone_line(rest, line_no, "end_hub")
             if self._end is not None:
                 raise ParseError(line_no, "Duplicate end_hub: exactly one allowed")
@@ -276,7 +279,7 @@ class MapParser:
             self._end = zone
             return
         if line.startswith("hub:"):
-            rest = line[len("hub:"):]
+            rest = line[len("hub:") :]
             name, x, y, meta = _parse_zone_line(rest, line_no, "hub")
             if name in self._zones:
                 raise ParseError(line_no, f"Duplicate zone name: {name!r}")
@@ -325,12 +328,14 @@ class MapParser:
 
     def _parse_connection_line_at(self, line_no: int, line: str) -> None:
         """Parse a single connection line and add to state."""
-        rest = line[len("connection:"):].strip()
+        rest = line[len("connection:") :].strip()
         zone_a, zone_b, meta = _parse_connection_line(rest, line_no)
 
         for zname in (zone_a, zone_b):
             if zname not in self._zones:
-                raise ParseError(line_no, f"Connection references undefined zone: {zname!r}")
+                raise ParseError(
+                    line_no, f"Connection references undefined zone: {zname!r}"
+                )
 
         pair = (min(zone_a, zone_b), max(zone_a, zone_b))
         if pair in self._seen_connection_pairs:
@@ -346,5 +351,7 @@ class MapParser:
                 max_link_capacity = _positive_int(v, "max_link_capacity")
 
         self._connections.append(
-            Connection(zone_a=zone_a, zone_b=zone_b, max_link_capacity=max_link_capacity)
+            Connection(
+                zone_a=zone_a, zone_b=zone_b, max_link_capacity=max_link_capacity
+            )
         )

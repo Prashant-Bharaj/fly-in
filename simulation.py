@@ -66,9 +66,7 @@ class Simulation:
             raise ValueError("No path from start to end")
         # Round-robin: spread drones across paths to avoid single-path bottlenecks
         k = len(path_list)
-        self.paths = [
-            list(path_list[(i - 1) % k]) for i in range(1, self.n + 1)
-        ]
+        self.paths = [list(path_list[(i - 1) % k]) for i in range(1, self.n + 1)]
 
     def run(self) -> List[str]:
         """

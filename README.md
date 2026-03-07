@@ -34,19 +34,21 @@ The project must respect the following:
 
 ### Setup
 
-We use a virtual environment for dependency isolation. `make install` creates `.venv` and installs dependencies (from `requirements-dev.txt`) with pip. After that, `make run` and `make lint` use the venv automatically when it exists.
+We use `uv` for dependency management and virtual environment setup. `make install` installs `uv` if needed and runs `uv sync --group dev`, which installs dependencies from `pyproject.toml`. After that, `make run` and `make lint` execute via `uv run`.
 
 ```bash
-make install   # creates .venv and installs flake8, mypy, pytest
+make install
 ```
 
-To run the simulation, pass a map file path:
+If you prefer installing it manually first, see: `https://docs.astral.sh/uv/`.
+
+To run the simulation directly with uv, pass a map file path:
 
 ```bash
-python main.py path/to/map.txt
+uv run python main.py path/to/map.txt
 ```
 
-Example: `python main.py maps/easy/01_linear_path.txt`
+Example: `uv run python main.py maps/easy/01_linear_path.txt`
 
 Optional: activate the venv yourself (`source .venv/bin/activate`) for ad‑hoc commands.
 
@@ -54,7 +56,7 @@ Optional: activate the venv yourself (`source .venv/bin/activate`) for ad‑hoc 
 
 | Target        | Description                                      |
 |---------------|--------------------------------------------------|
-| `make install` | Install dependencies (flake8, mypy, pytest)     |
+| `make install` | Install/sync dependencies from `pyproject.toml` |
 | `make run`     | Run the main script                             |
 | `make debug`   | Run under Python debugger (pdb)                 |
 | `make clean`   | Remove `__pycache__`, `.mypy_cache`, caches     |

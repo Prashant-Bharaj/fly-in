@@ -9,10 +9,10 @@ from typing import Optional
 class ZoneType(Enum):
     """Zone type: movement cost and accessibility (Chapter VI)."""
 
-    NORMAL = "normal"       # 1 turn, default
-    BLOCKED = "blocked"      # Inaccessible; any path using it is invalid
+    NORMAL = "normal"  # 1 turn, default
+    BLOCKED = "blocked"  # Inaccessible; any path using it is invalid
     RESTRICTED = "restricted"  # 2 turns to enter
-    PRIORITY = "priority"    # 1 turn, should be preferred in pathfinding
+    PRIORITY = "priority"  # 1 turn, should be preferred in pathfinding
 
     def movement_cost(self) -> int:
         """Turns required to enter this zone."""
@@ -73,7 +73,9 @@ class Connection:
         return (min(self.zone_a, self.zone_b), max(self.zone_a, self.zone_b))
 
     def __repr__(self) -> str:
-        return f"Connection({self.zone_a!r}-{self.zone_b!r}, cap={self.max_link_capacity})"
+        return (
+            f"Connection({self.zone_a!r}-{self.zone_b!r}, cap={self.max_link_capacity})"
+        )
 
 
 class Map:
