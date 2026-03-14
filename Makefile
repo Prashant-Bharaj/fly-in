@@ -1,6 +1,6 @@
 UV_RUN := uv run
 
-SRC := main.py parser.py model.py pathfinding.py simulation.py
+SRC := main.py parser.py model.py pathfinding.py simulation.py visual.py gui.py
 
 install: pyproject.toml
 	pip install uv

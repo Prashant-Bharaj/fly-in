@@ -28,7 +28,7 @@ class ZoneType(Enum):
 
 
 class Zone:
-    """A zone (hub) in the map: name, coordinates, type, optional color and capacity."""
+    """Zone (hub): name, coordinates, type, optional color and capacity."""
 
     def __init__(
         self,
@@ -42,6 +42,7 @@ class Zone:
         is_start: bool = False,
         is_end: bool = False,
     ) -> None:
+        """Initialize zone with name, coordinates, type, and metadata."""
         self.name = name
         self.x = x
         self.y = y
@@ -52,11 +53,15 @@ class Zone:
         self.is_end = is_end
 
     def __repr__(self) -> str:
-        return f"Zone({self.name!r}, {self.x}, {self.y}, {self.zone_type.value})"
+        """Return developer-readable zone representation."""
+        return (
+            f"Zone({self.name!r}, {self.x}, {self.y},"
+            f" {self.zone_type.value})"
+        )
 
 
 class Connection:
-    """A bidirectional connection between two zones with optional link capacity."""
+    """Bidirectional connection between two zones with optional capacity."""
 
     def __init__(
         self,
@@ -64,17 +69,20 @@ class Connection:
         zone_b: str,
         max_link_capacity: int = 1,
     ) -> None:
+        """Initialize connection between two zones with capacity."""
         self.zone_a = zone_a
         self.zone_b = zone_b
         self.max_link_capacity = max_link_capacity
 
     def pair(self) -> tuple[str, str]:
-        """Canonical unordered pair for duplicate detection (a-b same as b-a)."""
+        """Canonical pair for deduplication; a-b equals b-a."""
         return (min(self.zone_a, self.zone_b), max(self.zone_a, self.zone_b))
 
     def __repr__(self) -> str:
+        """Return developer-readable connection representation."""
         return (
-            f"Connection({self.zone_a!r}-{self.zone_b!r}, cap={self.max_link_capacity})"
+            f"Connection({self.zone_a!r}-{self.zone_b!r},"
+            f" cap={self.max_link_capacity})"
         )
 
 
@@ -94,6 +102,7 @@ class Map:
         zones: dict[str, Zone],
         connections: list[Connection],
     ) -> None:
+        """Initialize map with drone count, start/end zones, and graph."""
         self.nb_drones = nb_drones
         self.start_zone = start_zone
         self.end_zone = end_zone
@@ -105,7 +114,7 @@ class Map:
         return self.zones.get(name)
 
     def neighbors(self, zone_name: str) -> list[str]:
-        """Return list of zone names connected to the given zone (traversable only)."""
+        """Return traversable zone names connected to zone_name."""
         result: list[str] = []
         for conn in self.connections:
             other: Optional[str] = None
@@ -119,8 +128,10 @@ class Map:
                     result.append(other)
         return result
 
-    def get_connection(self, zone_a: str, zone_b: str) -> Optional[Connection]:
-        """Return the connection between two zones (order does not matter), or None."""
+    def get_connection(
+        self, zone_a: str, zone_b: str
+    ) -> Optional[Connection]:
+        """Return connection between two zones (order-independent), or None."""
         key = (min(zone_a, zone_b), max(zone_a, zone_b))
         for conn in self.connections:
             if conn.pair() == key:
@@ -128,5 +139,5 @@ class Map:
         return None
 
     def connection_name(self, from_zone: str, to_zone: str) -> str:
-        """Canonical name for the connection (for VII.5 output: D<ID>-<connection>)."""
+        """Canonical connection name for VII.5 output (D<ID>-<connection>)."""
         return f"{from_zone}-{to_zone}"
