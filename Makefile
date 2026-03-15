@@ -3,7 +3,7 @@ UV_RUN := uv run
 SRC := main.py parser.py model.py pathfinding.py simulation.py visual.py gui.py
 
 install: pyproject.toml
-	pip install uv
+	command -v uv >/dev/null 2>&1 || pip install uv
 	uv sync --group dev
 
 run:
