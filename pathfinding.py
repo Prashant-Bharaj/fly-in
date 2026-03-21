@@ -176,7 +176,8 @@ class ParallelChainRouter:
         self._pf = Pathfinder(drone_map)
 
     def _chain_entries(self, path: List[str]) -> List[Tuple[str, str]]:
-        """Return canonical edge pairs in path that first enter a restricted zone."""
+        """Return canonical edge pairs in path
+        that first enter a restricted zone."""
         entries: List[Tuple[str, str]] = []
         for i in range(len(path) - 1):
             u, v = path[i], path[i + 1]

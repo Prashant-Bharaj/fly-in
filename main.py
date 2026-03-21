@@ -4,11 +4,11 @@
 This module runs the drone routing system. See subject and maps/README.md.
 
 Usage:
-    python main.py <map_file>             # plain output (Dijkstra)
-    python main.py <map_file> --ek        # plain output (Edmonds-Karp)
-    python main.py <map_file> --custom    # plain output (custom parallel-chain)
-    python main.py <map_file> --visualize # ANSI terminal output
-    python main.py <map_file> --gui       # Pygame graphical interface
+python main.py <map_file>             # plain output (Dijkstra)
+python main.py <map_file> --ek        # plain output (Edmonds-Karp)
+python main.py <map_file> --custom    # plain output (custom parallel-chain)
+python main.py <map_file> --visualize # ANSI terminal output
+python main.py <map_file> --gui       # Pygame graphical interface
 """
 
 from __future__ import annotations
