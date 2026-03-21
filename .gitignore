@@ -9,7 +9,6 @@ docs/
 # Utility scripts (not required)
 scripts/
 
-run_tests.py
 # Benchmarking (not in submission list)
 benchmark.py
 # IDE / editor
