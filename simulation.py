@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 from model import Map
-from pathfinding import Pathfinder
+from pathfinding import EdmondsKarp, ParallelChainRouter, Pathfinder
 
 
 @dataclass
@@ -46,8 +46,19 @@ class Simulation:
     end are delivered and omitted from output.
     """
 
-    def __init__(self, drone_map: Map) -> None:
-        """Initialize simulation: compute paths and place drones at start."""
+    def __init__(
+        self,
+        drone_map: Map,
+        algorithm: str = "dijkstra",
+    ) -> None:
+        """Initialize simulation: compute paths and place drones at start.
+
+        Args:
+            drone_map: Parsed map to simulate.
+            algorithm: Path-finding algorithm to use.
+                "dijkstra" (default) uses Dijkstra with diverse paths.
+                "ek" uses Edmonds-Karp max-flow path assignment.
+        """
         self.drone_map = drone_map
         self.n = drone_map.nb_drones
         start_name = drone_map.start_zone.name
@@ -55,25 +66,34 @@ class Simulation:
         self.end_name = end_name
         self.start_name = start_name
 
-        pf = Pathfinder(drone_map)
-        # Use diverse paths only for large drone counts to avoid
-        # hurting smaller maps (e.g. Challenger map has 25 drones).
-        if self.n >= 15:
-            path_list = pf.find_diverse_paths(
-                start_name, end_name, k=min(12, self.n)
-            )
+        if algorithm == "ek":
+            ek = EdmondsKarp(drone_map)
+            self.paths = ek.find_paths(start_name, end_name, self.n)
+        elif algorithm == "custom":
+            router = ParallelChainRouter(drone_map)
+            self.paths = router.find_paths(start_name, end_name, self.n)
         else:
-            base = pf.find_shortest_path(start_name, end_name)
-            path_list = [base] if base else []
+            pf = Pathfinder(drone_map)
+            # Use diverse paths only for large drone counts to avoid
+            # hurting smaller maps (e.g. Challenger map has 25 drones).
+            if self.n >= 15:
+                path_list = pf.find_diverse_paths(
+                    start_name, end_name, k=min(12, self.n)
+                )
+            else:
+                base = pf.find_shortest_path(start_name, end_name)
+                path_list = [base] if base else []
+            if not path_list:
+                raise ValueError("No path from start to end")
+            # Round-robin: spread drones across paths to reduce bottlenecks
+            k = len(path_list)
+            self.paths = [
+                list(path_list[(i - 1) % k])
+                for i in range(1, self.n + 1)
+            ]
 
-        if not path_list:
+        if not self.paths:
             raise ValueError("No path from start to end")
-        # Round-robin: spread drones across paths to reduce bottlenecks
-        k = len(path_list)
-        self.paths = [
-            list(path_list[(i - 1) % k])
-            for i in range(1, self.n + 1)
-        ]
 
     def run(self) -> List[str]:
         """

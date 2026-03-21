@@ -4,7 +4,9 @@
 This module runs the drone routing system. See subject and maps/README.md.
 
 Usage:
-    python main.py <map_file>             # plain output
+    python main.py <map_file>             # plain output (Dijkstra)
+    python main.py <map_file> --ek        # plain output (Edmonds-Karp)
+    python main.py <map_file> --custom    # plain output (custom parallel-chain)
     python main.py <map_file> --visualize # ANSI terminal output
     python main.py <map_file> --gui       # Pygame graphical interface
 """
@@ -21,14 +23,17 @@ from visual import VisualRenderer
 
 def main() -> None:
     """Parse, simulate, and render the drone routing result."""
-    flags = {"--gui", "--visualize"}
+    flags = {"--gui", "--visualize", "--ek", "--custom"}
     args = [a for a in sys.argv[1:] if a not in flags]
     gui_mode = "--gui" in sys.argv[1:]
     visualize_mode = "--visualize" in sys.argv[1:]
+    ek_mode = "--ek" in sys.argv[1:]
+    custom_mode = "--custom" in sys.argv[1:]
 
     if not args:
         print(
-            "Usage: python main.py <map_file> [--visualize] [--gui]"
+            "Usage: python main.py <map_file>"
+            " [--ek] [--custom] [--visualize] [--gui]"
         )
         print(
             "Example: python main.py"
@@ -52,7 +57,13 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        sim = Simulation(drone_map)
+        if ek_mode:
+            algorithm = "ek"
+        elif custom_mode:
+            algorithm = "custom"
+        else:
+            algorithm = "dijkstra"
+        sim = Simulation(drone_map, algorithm=algorithm)
         lines = sim.run()
     except (ValueError, RuntimeError) as e:
         print(f"Simulation error: {e}", file=sys.stderr)
