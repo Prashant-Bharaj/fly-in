@@ -15,6 +15,7 @@ run_tests.py
 benchmark.py
 # IDE / editor
 .cursor/
+.claude/
 
 # ========== Python / build / env ==========
 # Python
