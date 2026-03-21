@@ -8,8 +8,7 @@ maps.tar.gz:Zone.Identifier
 docs/
 # Utility scripts (not required)
 scripts/
-# Tests (Chapter III.3: not submitted or graded)
-tests/
+
 run_tests.py
 # Benchmarking (not in submission list)
 benchmark.py
