@@ -21,9 +21,8 @@ EDGE_PENALTY = 100
 class Pathfinder:
     """Dijkstra-based shortest-path finder for the drone map.
 
-    No external graph libraries are used. Edge cost equals the
-    movement cost of the destination zone. Blocked zones are
-    skipped via Map.neighbors.
+    Edge cost equals the movement cost of the destination zone.
+    Blocked zones are skipped via Map.neighbors.
     """
 
     def __init__(self, drone_map: Map) -> None:
