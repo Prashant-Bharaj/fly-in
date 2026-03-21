@@ -4,8 +4,9 @@
 This module runs the drone routing system. See subject and maps/README.md.
 
 Usage:
-    python main.py <map_file>           # ANSI terminal output
-    python main.py <map_file> --gui     # Pygame graphical interface
+    python main.py <map_file>             # plain output
+    python main.py <map_file> --visualize # ANSI terminal output
+    python main.py <map_file> --gui       # Pygame graphical interface
 """
 
 from __future__ import annotations
@@ -20,12 +21,14 @@ from visual import VisualRenderer
 
 def main() -> None:
     """Parse, simulate, and render the drone routing result."""
-    args = [a for a in sys.argv[1:] if a != "--gui"]
+    flags = {"--gui", "--visualize"}
+    args = [a for a in sys.argv[1:] if a not in flags]
     gui_mode = "--gui" in sys.argv[1:]
+    visualize_mode = "--visualize" in sys.argv[1:]
 
     if not args:
         print(
-            "Usage: python main.py <map_file> [--gui]"
+            "Usage: python main.py <map_file> [--visualize] [--gui]"
         )
         print(
             "Example: python main.py"
@@ -65,13 +68,16 @@ def main() -> None:
             )
             sys.exit(1)
         SimulationGUI(drone_map, lines).run()
-    else:
+    elif visualize_mode:
         renderer = VisualRenderer(drone_map)
         renderer.print_header()
         total = len(lines)
         for turn_num, line in enumerate(lines, 1):
             renderer.print_turn(turn_num, line, total)
         renderer.print_summary(total)
+    else:
+        for line in lines:
+            print(line)
 
 
 if __name__ == "__main__":
