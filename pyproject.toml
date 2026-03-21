@@ -3,15 +3,14 @@ name = "fly-in"
 version = "0.1.0"
 description = "Drone routing system — navigate multiple drones through connected zones."
 readme = "README.md"
-requires-python = "==3.10.*"
+requires-python = ">=3.10"
 dependencies = [
     "pygame>=2.6.1",
 ]
 
 [dependency-groups]
 dev = [
-	"flake8>=6.0.0",
-	"mypy>=1.0.0",
-	"pytest>=7.0.0",
-	"ruff>=0.15.5",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
 ]
